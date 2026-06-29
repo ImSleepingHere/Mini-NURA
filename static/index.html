@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini NURA — Healthcare Assistant</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f7f6f2;
+      --surface:   #ffffff;
+      --border:    #e4e2db;
+      --text:      #1a1a18;
+      --muted:     #7a7870;
+      --accent:    #1a6b4a;
+      --accent-bg: #eaf4ef;
+      --warn:      #b84c00;
+      --warn-bg:   #fff3ed;
+      --radius:    12px;
+      --mono:      'Courier New', monospace;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 14px; letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+
+    .header-text h1 { font-size: 17px; font-weight: 600; }
+    .header-text p  { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+    .docs-pills {
+      margin-left: auto;
+      display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
+    }
+
+    .pill {
+      font-size: 11px; padding: 3px 9px;
+      background: var(--accent-bg); color: var(--accent);
+      border-radius: 20px; border: 1px solid #c2ddd1;
+      font-weight: 500;
+    }
+
+    /* ── Main layout ── */
+    main {
+      flex: 1;
+      max-width: 780px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── Chat history ── */
+    #chat {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--muted);
+    }
+
+    .empty-state .icon {
+      font-size: 32px; margin-bottom: 12px;
+    }
+
+    .empty-state h2 { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+    .empty-state p  { font-size: 14px; line-height: 1.6; }
+
+    .suggestions {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      justify-content: center; margin-top: 20px;
+    }
+
+    .suggestion {
+      font-size: 13px; padding: 8px 14px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; cursor: pointer; color: var(--text);
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .suggestion:hover { border-color: var(--accent); background: var(--accent-bg); }
+
+    /* ── Message bubbles ── */
+    .msg { display: flex; flex-direction: column; gap: 4px; }
+
+    .msg-q {
+      align-self: flex-end;
+      max-width: 80%;
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: var(--radius) var(--radius) 4px var(--radius);
+      font-size: 14px; line-height: 1.55;
+    }
+
+    .msg-a {
+      align-self: flex-start;
+      max-width: 88%;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .msg-a-bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px var(--radius) var(--radius) var(--radius);
+      padding: 14px 16px;
+      font-size: 14px; line-height: 1.65;
+    }
+
+    .msg-a-bubble.out-of-scope {
+      background: var(--warn-bg);
+      border-color: #f0c9b0;
+    }
+
+    .oos-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--warn); text-transform: uppercase;
+      margin-bottom: 6px; display: block;
+    }
+
+    .sources {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+
+    .source-tag {
+      font-size: 11px; padding: 3px 9px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 20px; color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    /* ── Typing indicator ── */
+    .typing {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px var(--radius) var(--radius) var(--radius);
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 5px;
+      align-self: flex-start;
+    }
+
+    .dot {
+      width: 7px; height: 7px;
+      background: var(--muted);
+      border-radius: 50%;
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+      40%            { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* ── Input bar ── */
+    .input-bar {
+      display: flex; gap: 10px; align-items: flex-end;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      transition: border-color 0.15s;
+    }
+
+    .input-bar:focus-within { border-color: var(--accent); }
+
+    #question {
+      flex: 1; border: none; outline: none;
+      font-size: 14px; line-height: 1.5;
+      background: transparent; color: var(--text);
+      resize: none; max-height: 140px;
+      font-family: inherit;
+    }
+
+    #question::placeholder { color: var(--muted); }
+
+    #send-btn {
+      flex-shrink: 0;
+      width: 34px; height: 34px;
+      background: var(--accent); border: none;
+      border-radius: 8px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.15s;
+    }
+
+    #send-btn:hover { opacity: 0.85; }
+    #send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    #send-btn svg { width: 16px; height: 16px; fill: #fff; }
+
+    .hint { font-size: 12px; color: var(--muted); text-align: center; }
+
+    /* ── Error toast ── */
+    #error-toast {
+      display: none;
+      background: var(--warn-bg); border: 1px solid #f0c9b0;
+      color: var(--warn); border-radius: 8px;
+      padding: 10px 14px; font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">N</div>
+  <div class="header-text">
+    <h1>Mini NURA</h1>
+    <p>WHO fact sheet assistant — answers from documents only</p>
+  </div>
+  <div class="docs-pills" id="pills"></div>
+</header>
+
+<main>
+  <div id="error-toast"></div>
+
+  <div id="chat">
+    <div class="empty-state" id="empty">
+      <div class="icon">&#x1F4CB;</div>
+      <h2>Ask NURA a health question</h2>
+      <p>I only answer based on the WHO fact sheets loaded into the system.<br>
+         Questions outside those topics will be politely declined.</p>
+      <div class="suggestions">
+        <button class="suggestion" onclick="prefill('What are the symptoms of asthma?')">Symptoms of asthma?</button>
+        <button class="suggestion" onclick="prefill('How is botulism transmitted?')">How is botulism transmitted?</button>
+        <button class="suggestion" onclick="prefill('How can tetanus be prevented?')">Preventing tetanus?</button>
+        <button class="suggestion" onclick="prefill('What treatment exists for hantavirus?')">Hantavirus treatment?</button>
+        <button class="suggestion" onclick="prefill('Is there a vaccine for yellow fever?')">Yellow fever vaccine?</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="error-toast"></div>
+
+  <div class="input-bar">
+    <textarea id="question" rows="1" placeholder="Ask a health question…"></textarea>
+    <button id="send-btn" onclick="sendQuestion()" aria-label="Send">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+      </svg>
+    </button>
+  </div>
+  <p class="hint">Powered by Gemini · sources shown with every answer</p>
+</main>
+
+<script>
+  const chatEl   = document.getElementById('chat');
+  const inputEl  = document.getElementById('question');
+  const sendBtn  = document.getElementById('send-btn');
+  const toastEl  = document.getElementById('error-toast');
+  const emptyEl  = document.getElementById('empty');
+  const pillsEl  = document.getElementById('pills');
+
+  // Auto-grow textarea
+  inputEl.addEventListener('input', () => {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = inputEl.scrollHeight + 'px';
+  });
+
+  // Send on Enter (Shift+Enter = newline)
+  inputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendQuestion();
+    }
+  });
+
+  // Load health check to populate pills
+  fetch('/health')
+    .then(r => r.json())
+    .then(data => {
+      (data.docs_loaded || []).forEach(doc => {
+        const p = document.createElement('span');
+        p.className = 'pill';
+        p.textContent = doc;
+        pillsEl.appendChild(p);
+      });
+    })
+    .catch(() => {});
+
+  function prefill(text) {
+    inputEl.value = text;
+    inputEl.focus();
+    inputEl.style.height = 'auto';
+    inputEl.style.height = inputEl.scrollHeight + 'px';
+  }
+
+  function showError(msg) {
+    toastEl.textContent = msg;
+    toastEl.style.display = 'block';
+    setTimeout(() => toastEl.style.display = 'none', 5000);
+  }
+
+  function appendQuestion(text) {
+    if (emptyEl) emptyEl.remove();
+    const div = document.createElement('div');
+    div.className = 'msg';
+    div.innerHTML = `<div class="msg-q">${escHtml(text)}</div>`;
+    chatEl.appendChild(div);
+    return div;
+  }
+
+  function appendTyping() {
+    const div = document.createElement('div');
+    div.className = 'msg';
+    div.innerHTML = `<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+    chatEl.appendChild(div);
+    div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    return div;
+  }
+
+  function renderAnswer(container, data) {
+    const isOos = data.out_of_scope;
+    let sourcesHtml = '';
+    if (!isOos && data.sources && data.sources.length) {
+      const tags = data.sources.map(s => {
+        const label = s.filename.replace(/([A-Z])/g, ' $1').trim();
+        return s.url
+          ? `<a class="source-tag" href="${s.url}" target="_blank" rel="noopener">${escHtml(label)}</a>`
+          : `<span class="source-tag">${escHtml(label)}</span>`;
+      }).join('');
+      sourcesHtml = `<div class="sources">${tags}</div>`;
+    }
+
+    container.innerHTML = `
+      <div class="msg-a">
+        <div class="msg-a-bubble ${isOos ? 'out-of-scope' : ''}">
+          ${isOos ? '<span class="oos-label">Out of scope</span>' : ''}
+          ${escHtml(data.answer).replace(/\n/g, '<br>')}
+        </div>
+        ${sourcesHtml}
+      </div>`;
+    container.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  async function sendQuestion() {
+    const q = inputEl.value.trim();
+    if (!q) return;
+
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    sendBtn.disabled = true;
+    toastEl.style.display = 'none';
+
+    appendQuestion(q);
+    const typingContainer = appendTyping();
+
+    try {
+      const res = await fetch('/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: q }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Server error' }));
+        throw new Error(err.detail || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      renderAnswer(typingContainer, data);
+    } catch (err) {
+      typingContainer.remove();
+      showError('Error: ' + err.message);
+    } finally {
+      sendBtn.disabled = false;
+      inputEl.focus();
+    }
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+</script>
+</body>
+</html>
