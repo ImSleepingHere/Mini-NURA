@@ -217,7 +217,7 @@ Excerpts:
 
     time.sleep(RATE_LIMIT_DELAY)
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-3.1-flash-lite",
         contents=user_message,
         config={"system_instruction": SYSTEM_PROMPT, "max_output_tokens": 512},
     )
