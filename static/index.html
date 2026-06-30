@@ -52,17 +52,168 @@
     .header-text h1 { font-size: 17px; font-weight: 600; }
     .header-text p  { font-size: 13px; color: var(--muted); margin-top: 2px; }
 
-    .docs-pills {
+    .docs-btn {
       margin-left: auto;
-      display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 7px 14px 7px 12px;
+      cursor: pointer; color: var(--text); font-size: 13px; font-weight: 500;
+      transition: border-color 0.15s, background 0.15s;
     }
 
-    .pill {
-      font-size: 11px; padding: 3px 9px;
-      background: var(--accent-bg); color: var(--accent);
-      border-radius: 20px; border: 1px solid #c2ddd1;
-      font-weight: 500;
+    .docs-btn:hover { border-color: var(--accent); background: var(--accent-bg); }
+    .docs-btn svg { width: 16px; height: 16px; color: var(--muted); flex-shrink: 0; }
+
+    .docs-count {
+      background: var(--accent); color: #fff;
+      font-size: 11px; font-weight: 600;
+      min-width: 18px; height: 18px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 5px;
     }
+
+    /* ── Modal ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(20, 20, 18, 0.45);
+      z-index: 100;
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 16px;
+      width: 100%; max-width: 480px;
+      max-height: 80vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .modal-header h2 { font-size: 15px; font-weight: 600; }
+
+    .modal-close {
+      width: 28px; height: 28px;
+      border: none; background: transparent; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px; color: var(--muted);
+      transition: background 0.15s;
+    }
+
+    .modal-close:hover { background: var(--bg); }
+    .modal-close svg { width: 16px; height: 16px; }
+
+    .upload-zone {
+      margin: 16px 20px 0;
+      border: 1.5px dashed var(--border);
+      border-radius: 10px;
+      padding: 22px 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      cursor: pointer; color: var(--muted);
+      transition: border-color 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--accent); background: var(--accent-bg); color: var(--accent);
+    }
+
+    .upload-zone svg { width: 22px; height: 22px; }
+    .upload-zone-text { font-size: 13px; }
+
+    #upload-status {
+      margin: 0 20px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    #upload-status.error { color: var(--warn); margin-top: 8px; }
+    #upload-status.success { color: var(--accent); margin-top: 8px; }
+
+    .modal-list {
+      padding: 12px 12px 16px;
+      overflow-y: auto;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+
+    .modal-empty {
+      text-align: center; color: var(--muted);
+      font-size: 13px; padding: 32px 16px;
+    }
+
+    .doc-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      transition: background 0.12s;
+      position: relative;
+    }
+
+    .doc-row:hover { background: var(--bg); }
+
+    .doc-icon {
+      width: 30px; height: 30px;
+      background: var(--accent-bg); color: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .doc-icon svg { width: 15px; height: 15px; }
+
+    .doc-info { flex: 1; min-width: 0; }
+    .doc-name { font-size: 13.5px; font-weight: 500; }
+    .doc-meta { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+
+    .doc-menu-wrap { position: relative; flex-shrink: 0; }
+
+    .doc-menu-btn {
+      width: 28px; height: 28px;
+      border: none; background: transparent; cursor: pointer;
+      border-radius: 6px; color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .doc-menu-btn:hover { background: var(--border); color: var(--text); }
+    .doc-menu-btn svg { width: 16px; height: 16px; }
+
+    .doc-menu {
+      display: none;
+      position: absolute;
+      right: 0; top: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      min-width: 140px;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    .doc-menu.open { display: block; }
+
+    .doc-menu-item {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 9px 12px;
+      border: none; background: transparent; cursor: pointer;
+      font-size: 13px; text-align: left; color: var(--warn);
+      transition: background 0.12s;
+    }
+
+    .doc-menu-item:hover { background: var(--warn-bg); }
+    .doc-menu-item svg { width: 14px; height: 14px; }
 
     /* ── Main layout ── */
     main {
@@ -239,12 +390,17 @@
     <h1>Mini NURA</h1>
     <p>WHO fact sheet assistant — answers from documents only</p>
   </div>
-  <div class="docs-pills" id="pills"></div>
+  <button class="docs-btn" id="docs-btn" onclick="openDocsModal()">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+      <path d="M14 2v6h6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+    </svg>
+    <span>Documents</span>
+    <span class="docs-count" id="docs-count">0</span>
+  </button>
 </header>
 
 <main>
-  <div id="error-toast"></div>
-
   <div id="chat">
     <div class="empty-state" id="empty">
       <div class="icon">&#x1F4CB;</div>
@@ -261,8 +417,6 @@
     </div>
   </div>
 
-  <div id="error-toast"></div>
-
   <div class="input-bar">
     <textarea id="question" rows="1" placeholder="Ask a health question…"></textarea>
     <button id="send-btn" onclick="sendQuestion()" aria-label="Send">
@@ -271,8 +425,38 @@
       </svg>
     </button>
   </div>
+  <div id="error-toast"></div>
   <p class="hint">Powered by Gemini · sources shown with every answer</p>
 </main>
+
+<!-- ── Documents Modal ── -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeDocsModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Documents</h2>
+      <button class="modal-close" onclick="closeDocsModal()" aria-label="Close">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <label class="upload-zone" id="upload-zone" for="file-input">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 16V4M12 4l-5 5M12 4l5 5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="upload-zone-text">Click to upload or drag a .txt file here</span>
+      <input type="file" id="file-input" accept=".txt" hidden>
+    </label>
+
+    <div id="upload-status"></div>
+
+    <div class="modal-list" id="modal-list">
+      <div class="modal-empty" id="modal-empty">Loading documents…</div>
+    </div>
+  </div>
+</div>
 
 <script>
   const chatEl   = document.getElementById('chat');
@@ -280,7 +464,13 @@
   const sendBtn  = document.getElementById('send-btn');
   const toastEl  = document.getElementById('error-toast');
   const emptyEl  = document.getElementById('empty');
-  const pillsEl  = document.getElementById('pills');
+  const docsCountEl = document.getElementById('docs-count');
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  const modalList = document.getElementById('modal-list');
+  const modalEmpty = document.getElementById('modal-empty');
+  const uploadZone = document.getElementById('upload-zone');
+  const fileInput  = document.getElementById('file-input');
+  const uploadStatus = document.getElementById('upload-status');
 
   // Auto-grow textarea
   inputEl.addEventListener('input', () => {
@@ -296,18 +486,188 @@
     }
   });
 
-  // Load health check to populate pills
-  fetch('/health')
-    .then(r => r.json())
-    .then(data => {
-      (data.docs_loaded || []).forEach(doc => {
-        const p = document.createElement('span');
-        p.className = 'pill';
-        p.textContent = doc;
-        pillsEl.appendChild(p);
-      });
-    })
-    .catch(() => {});
+  // Load doc count on page load
+  refreshDocCount();
+
+  function refreshDocCount() {
+    fetch('/health')
+      .then(r => r.json())
+      .then(data => { docsCountEl.textContent = (data.docs_loaded || []).length; })
+      .catch(() => {});
+  }
+
+  // ── Documents Modal ──────────────────────────────────────
+
+  function openDocsModal() {
+    modalBackdrop.classList.add('open');
+    loadDocumentList();
+  }
+
+  function closeDocsModal(e) {
+    if (e && e.target !== modalBackdrop) return;
+    modalBackdrop.classList.remove('open');
+    uploadStatus.textContent = '';
+    uploadStatus.className = '';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDocsModal();
+  });
+
+  async function loadDocumentList() {
+    modalList.innerHTML = '';
+    modalEmpty.style.display = 'block';
+    modalEmpty.textContent = 'Loading documents…';
+    modalList.appendChild(modalEmpty);
+
+    try {
+      const res = await fetch('/documents');
+      if (!res.ok) throw new Error('Failed to load documents');
+      const docs = await res.json();
+
+      docsCountEl.textContent = docs.length;
+
+      if (docs.length === 0) {
+        modalEmpty.textContent = 'No documents yet — upload one above.';
+        return;
+      }
+
+      modalEmpty.remove();
+      docs.forEach(doc => modalList.appendChild(buildDocRow(doc)));
+    } catch (err) {
+      modalEmpty.textContent = 'Could not load documents.';
+    }
+  }
+
+  function buildDocRow(doc) {
+    const row = document.createElement('div');
+    row.className = 'doc-row';
+    const sizeKb = (doc.size_bytes / 1024).toFixed(1);
+    row.innerHTML = `
+      <div class="doc-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+          <path d="M14 2v6h6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="doc-info">
+        <div class="doc-name">${escHtml(formatDocName(doc.filename))}</div>
+        <div class="doc-meta">${doc.chunks} chunks · ${sizeKb} KB</div>
+      </div>
+      <div class="doc-menu-wrap">
+        <button class="doc-menu-btn" aria-label="Options">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="5" r="1.6" fill="currentColor"/>
+            <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
+            <circle cx="12" cy="19" r="1.6" fill="currentColor"/>
+          </svg>
+        </button>
+        <div class="doc-menu">
+          <button class="doc-menu-item">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m3 0l-1 14a1 1 0 01-1 1H7a1 1 0 01-1-1L5 6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Delete
+          </button>
+        </div>
+      </div>`;
+
+    const menuBtn = row.querySelector('.doc-menu-btn');
+    const menu = row.querySelector('.doc-menu');
+    const deleteBtn = row.querySelector('.doc-menu-item');
+
+    menuBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      closeAllMenus();
+      menu.classList.add('open');
+    });
+
+    deleteBtn.addEventListener('click', () => deleteDocument(doc.filename, row));
+
+    return row;
+  }
+
+  function closeAllMenus() {
+    document.querySelectorAll('.doc-menu.open').forEach(m => m.classList.remove('open'));
+  }
+
+  document.addEventListener('click', closeAllMenus);
+
+  async function deleteDocument(filename, rowEl) {
+    if (!confirm(`Delete "${formatDocName(filename)}"? This removes it from the knowledge base.`)) return;
+
+    rowEl.style.opacity = '0.4';
+    try {
+      const res = await fetch(`/documents/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Delete failed' }));
+        throw new Error(err.detail);
+      }
+      rowEl.remove();
+      docsCountEl.textContent = modalList.querySelectorAll('.doc-row').length;
+      if (modalList.querySelectorAll('.doc-row').length === 0) {
+        modalEmpty.textContent = 'No documents yet — upload one above.';
+        modalEmpty.style.display = 'block';
+        modalList.appendChild(modalEmpty);
+      }
+    } catch (err) {
+      rowEl.style.opacity = '1';
+      showUploadStatus('Error: ' + err.message, true);
+    }
+  }
+
+  // ── Upload ──────────────────────────────────────────────
+
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length) uploadFile(fileInput.files[0]);
+  });
+
+  uploadZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    uploadZone.classList.add('dragover');
+  });
+
+  uploadZone.addEventListener('dragleave', () => {
+    uploadZone.classList.remove('dragover');
+  });
+
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) uploadFile(file);
+  });
+
+  async function uploadFile(file) {
+    if (!file.name.toLowerCase().endsWith('.txt')) {
+      showUploadStatus('Only .txt files are accepted.', true);
+      return;
+    }
+
+    showUploadStatus(`Uploading "${file.name}"…`, false);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/documents', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Upload failed' }));
+        throw new Error(err.detail);
+      }
+      const doc = await res.json();
+      showUploadStatus(`Added "${formatDocName(doc.filename)}" — ${doc.chunks} chunks indexed.`, false, true);
+      fileInput.value = '';
+      loadDocumentList();
+    } catch (err) {
+      showUploadStatus('Error: ' + err.message, true);
+    }
+  }
+
+  function showUploadStatus(msg, isError, isSuccess) {
+    uploadStatus.textContent = msg;
+    uploadStatus.className = isError ? 'error' : (isSuccess ? 'success' : '');
+  }
 
   function prefill(text) {
     inputEl.value = text;
@@ -345,7 +705,7 @@
     let sourcesHtml = '';
     if (!isOos && data.sources && data.sources.length) {
       const tags = data.sources.map(s => {
-        const label = s.filename.replace(/([A-Z])/g, ' $1').trim();
+        const label = formatDocName(s.filename);
         return s.url
           ? `<a class="source-tag" href="${s.url}" target="_blank" rel="noopener">${escHtml(label)}</a>`
           : `<span class="source-tag">${escHtml(label)}</span>`;
@@ -357,7 +717,7 @@
       <div class="msg-a">
         <div class="msg-a-bubble ${isOos ? 'out-of-scope' : ''}">
           ${isOos ? '<span class="oos-label">Out of scope</span>' : ''}
-          ${escHtml(data.answer).replace(/\n/g, '<br>')}
+          ${renderMarkdown(data.answer)}
         </div>
         ${sourcesHtml}
       </div>`;
@@ -399,9 +759,21 @@
     }
   }
 
+  function formatDocName(filename) {
+    return filename.replace(/([a-z])([A-Z])/g, '$1 $2').trim();
+  }
+
   function escHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
+
+  function renderMarkdown(text) {
+    return escHtml(text)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/\n/g, '<br>');
+  }
 </script>
+
 </body>
 </html>
