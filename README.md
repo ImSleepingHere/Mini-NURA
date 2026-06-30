@@ -12,19 +12,20 @@ source .venv/bin/activate        # Windows: .venv\Scripts\activate
 # 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Add your API key
-cp .env.example .env             # then edit .env with your key
+# 3. Add your API key to a .env file (you can make one)
 
-# 4. Add WHO fact sheets
-# Paste content from https://www.who.int/news-room/fact-sheets into:
-#   docs/diabetes.txt
-#   docs/hypertension.txt
-#   docs/tuberculosis.txt
-#   docs/depression.txt
-#   docs/cancer.txt
+# 4. Add your documents
+Can only be a .txt document. To add a source make sure that the first line in the document be SOURCE: your-link-here
 
 # 5. Launch notebook
 jupyter notebook mini_nura.ipynb
+```
+## FastAPI setup
+```bash
+# 1. Open terminal in vscode
+# 2. type the following:
+uvicorn app:app --reload
+# 3. go to http://127.0.0.1:8000/ and it should be there
 ```
 
 ## Running the notebook
@@ -37,16 +38,14 @@ jupyter notebook mini_nura.ipynb
 
 ```
 mini-nura/
-├── .venv/              # virtual environment (gitignored)
-├── .env                # ANTHROPIC_API_KEY (gitignored)
-├── .gitignore
 ├── requirements.txt
 ├── README.md
 ├── docs/               # WHO fact sheets as .txt files
-│   ├── diabetes.txt
-│   ├── hypertension.txt
-│   ├── tuberculosis.txt
-│   ├── depression.txt
+│   ├── asthma.txt
+│   ├── botulism.txt
+│   ├── cancer.txt
+│   ├── hantavirus.txt
+│   ├── tetanus.txt
 │   └── cancer.txt
 ├── chroma_db/          # persisted vector index (gitignored, auto-generated)
 └── mini_nura.ipynb     # main notebook
