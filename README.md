@@ -7,7 +7,7 @@ A document-grounded Q&A assistant that answers questions using only the provided
 ```bash
 # 1. Create and activate virtual environment
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+source .venv/Scripts/activate
 
 # 2. Install dependencies
 pip install -r requirements.txt
@@ -34,19 +34,23 @@ uvicorn app:app --reload
 - **Subsequent runs:** Cell 4 detects the existing index and skips re-embedding. Jump straight to Cell 7 for Q&A.
 - **Reset index:** delete the `chroma_db/` folder and re-run Cell 4.
 
-## Project structure
+## Sample Data
 
-```
-mini-nura/
-├── requirements.txt
-├── README.md
-├── docs/               # WHO fact sheets as .txt files
-│   ├── asthma.txt
-│   ├── botulism.txt
-│   ├── cancer.txt
-│   ├── hantavirus.txt
-│   ├── tetanus.txt
-│   └── cancer.txt
-├── chroma_db/          # persisted vector index (gitignored, auto-generated)
-└── mini_nura.ipynb     # main notebook
-```
+- The data was from WHO's Fact Sheets. The documents includes only what was written in the fact sheet.
+
+## AI Usage
+- Used AI for the RAG pipeline
+- FastAPI backend and HTML front end
+- Document upload
+- Out-of-scope logic
+
+## What I changed/fixed
+- Changed the APIs multiple times due to errors (some gemini models don't have a RPM)
+- Fixed an error where the code was in an infinte for loop in cell 3 (chunk_text function)
+- Cleaning the coding, and fixing errors that were produced
+- Testing use cases
+
+## Improvement and Extra Ideas
+- Creating a front end for the project instead of using the notebook
+- Live document upload (on the spot RAG updates)
+- Adding the source with each answer
